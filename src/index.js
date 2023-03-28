@@ -1,7 +1,6 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-
 import { imageMarkup } from './js/imageMarkup';
 import { Pixabay } from './js/Pixabay';
 
@@ -14,6 +13,13 @@ const refs = {
     loadMoreBtn: document.querySelector('.load-more'),  
 };
 
+let lightboxGallery = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+  // heightRatio: 0.85,
+});
+
+imageMarkup();
 
 Notiflix.Notify.init({
     width: '300px',
