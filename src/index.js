@@ -1,8 +1,8 @@
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+// import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { imageMarkup } from './js/imageMarkup';
-import { Pixabay } from './js/Pixabay';
+import { baseURL, API_KEY } from './js/Pixabay';
 
 
 const refs = {
@@ -13,24 +13,48 @@ const refs = {
     loadMoreBtn: document.querySelector('.load-more'),  
 };
 
+const notifyInit = {
+  width: '300px',
+  position: 'center-top',
+  borderRadius: '15px',
+  timeout: 2000,
+  fontSize: '16px',
+  cssAnimationDuration: 600,
+  cssAnimationStyle: 'from-top',
+};
+
+// "Sorry, there are no images matching your search query. Please try again.";
+// "We're sorry, but you've reached the end of search results.";
+// "Hooray! We found ${totalHits} images.";
+
+refs.loadMoreBtn.style.visibility = 'hidden';
+
 let lightboxGallery = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
   // heightRatio: 0.85,
 });
 
-imageMarkup();
+refs.form.addEventListener('submit', onSubmitBtnClick);
+refs.form.addEventListener('click', onLoadMoreBtnClick);
 
-Notiflix.Notify.init({
-    width: '300px',
-    position: 'center-top',
-    borderRadius: '15px',
-    timeout: 2000,
-    fontSize: '16px',
-    cssAnimationDuration: 600,
-    cssAnimationStyle: 'from-top',
-  });
+function onSubmitBtnClick(event) {
+  event.preventDefault();
 
-//   "Sorry, there are no images matching your search query. Please try again."
-// "We're sorry, but you've reached the end of search results."
-// "Hooray! We found totalHits images."
+  const query = document.querySelector('input').value.trim();
+  const URL = `${baseURL}?key=${API_KEY}&q=${query}&image_type=photo&orientation='horizontal'&safesearch=true`;
+
+  refs.gallery.innerHTML = '';
+
+  fetch(URL)
+  .then(response => response.json())
+  .then((data) => {
+    const imageMarkupResult = imageMarkup(data.hits)
+    refs.gallery.insertAdjacentHTML('beforeend', imageMarkupResult);
+  })
+  .catch((error) => console.error(error));
+};
+
+function onLoadMoreBtnClick(event) {
+
+};

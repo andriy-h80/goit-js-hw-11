@@ -1,8 +1,7 @@
 
-
 export function imageMarkup(images) {
 
-    const imageMarkup = images.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
+    return images.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
         return `<a class="gallery__item" href="${largeImageURL}" rel='noreferrer noopener nofollow'>
             <div class="photo-card">    
                 <img src="${webformatURL}" alt="${tags}" loading="lazy" />
@@ -23,8 +22,5 @@ export function imageMarkup(images) {
             </div>
         </a>`;
     }).join('');
-
-    refs.gallery.insertAdjacentHTML('beforeend', imageMarkup);
-    return imageMarkup;
 
 };
