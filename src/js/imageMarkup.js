@@ -21,6 +21,7 @@ export function imageMarkup(images) {
                 </div>
             </div>
         </a>`;
-    }).join('');
+        }
+    ).join('');
 
 };

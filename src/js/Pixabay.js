@@ -1,58 +1,50 @@
 import axios from 'axios';
 
-export const API_KEY = '34772509-2b3ff3d3039847d74197d09be';
+const API_KEY = '34772509-2b3ff3d3039847d74197d09be';
+const baseURL = 'https://pixabay.com/api/';
 
+export class Pixabay {
+    #page = 1;
+    #per_page = 40;
+    #query = '';
+    #totalPages = 0;
 
-export const baseURL = 'https://pixabay.com/api/';
-axios.defaults.baseURL = 'https://pixabay.com/api/';
+    async getImages() {
+        const params = {
+            key: API_KEY,
+            page: this.#page,
+            q: this.#query,
+            per_page: this.#per_page,
+            image_type: 'photo',
+            orientation: 'horizontal',
+            safesearch: true,
+        }
 
+        const { data } = await axios.get(baseURL, { params });
+        return data;
+    }
 
-// export const instance = axios.create({
-//     baseURL: 'https://pixabay.com/api/',
-// });
+    get query() {
+       this.#query;
+    }
 
-// export function getAllImages() {
-//     return instance.get('images');
-// };
+    set query(newQuery) {
+        this.#query = newQuery;
+    }
 
-///////////////////////////////////
-// const fetchFriends = async () => {
-//     const token = await fetch("my-api.com/me");
-//     const user = await fetch(`my-api.com/profile?token=${token}`);
-//     const friends = await fetch(`my-api.com/users/${user.id}/friends`);
-//     return friends;
-//   };
-  
-// fetchFriends()
-//     .then(friends => console.log(friends))
-//     .catch(error => console.error(error));
-////////////////////////////////////
-// const fetchUsers = async () => {
-//     try {
-//       const response = await fetch("https://jsonplaceholder.typicode.com/users");
-//       const users = await response.json();
-//       console.log(users);
-//     } catch (error) {
-//       console.log(error.message);
-//     }
-//   };
-  
-//   fetchUsers();
-////////////////////////////////////
+    incrementPage() {
+        this.#page += 1;
+    }
 
+    resetPage() {
+        this.#page = 1;
+    }
 
-// var API_KEY = '34772509-2b3ff3d3039847d74197d09be';
-// var URL = "https://pixabay.com/api/?key="+API_KEY+"&q="+encodeURIComponent('red roses');
-// $.getJSON(URL, function(data){
-// if (parseInt(data.totalHits) > 0)
-//     $.each(data.hits, function(i, hit){ console.log(hit.pageURL); });
-// else
-//     console.log('No hits');
-// });
+    totalPages(totalHits) {
+        this.#totalPages = totalHits;
+    }
 
-
-// key - твій унікальний ключ доступу до API.
-// q - термін для пошуку. Те, що буде вводити користувач.
-// image_type = photo;
-// orientation = 'horizontal';
-// safesearch = true;
+    hasMoreImages() {
+        return this.#page < Math.ceil(this.#totalPages / this.#per_page);
+    }
+}

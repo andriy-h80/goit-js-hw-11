@@ -1,17 +1,19 @@
-// import { Notify } from 'notiflix';
+import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { imageMarkup } from './js/imageMarkup';
-import { baseURL, API_KEY } from './js/Pixabay';
-
+import { Pixabay } from './js/Pixabay';
 
 const refs = {
-    form: document.querySelector('.search__form'),
-    searhInput: document.querySelector('.search__form-input'),
-    searhBtn: document.querySelector('.search__form-button'),
-    gallery: document.querySelector('.gallery'),
-    loadMoreBtn: document.querySelector('.load-more'),  
+  form: document.querySelector('.search__form'),
+  searchInput: document.querySelector('.search__form-input'),
+  searchBtn: document.querySelector('.search__form-button'),
+  gallery: document.querySelector('.gallery'),
+  loadMoreBtn: document.querySelector('.load-more'), 
+    
 };
+
+const pixaby = new Pixabay();
 
 const notifyInit = {
   width: '300px',
@@ -23,11 +25,8 @@ const notifyInit = {
   cssAnimationStyle: 'from-top',
 };
 
-// "Sorry, there are no images matching your search query. Please try again.";
 // "We're sorry, but you've reached the end of search results.";
-// "Hooray! We found ${totalHits} images.";
 
-refs.loadMoreBtn.style.visibility = 'hidden';
 
 let lightboxGallery = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
@@ -35,26 +34,78 @@ let lightboxGallery = new SimpleLightbox('.gallery a', {
   // heightRatio: 0.85,
 });
 
+refs.loadMoreBtn.style.visibility = 'hidden';
+
 refs.form.addEventListener('submit', onSubmitBtnClick);
 refs.form.addEventListener('click', onLoadMoreBtnClick);
 
-function onSubmitBtnClick(event) {
+async function onSubmitBtnClick(event) {
   event.preventDefault();
 
-  const query = document.querySelector('input').value.trim();
-  const URL = `${baseURL}?key=${API_KEY}&q=${query}&image_type=photo&orientation='horizontal'&safesearch=true`;
-
+  const query = document.querySelector('input').value.trim().toLowerCase();
+  
   refs.gallery.innerHTML = '';
 
-  fetch(URL)
-  .then(response => response.json())
-  .then((data) => {
-    const imageMarkupResult = imageMarkup(data.hits)
+  if (!query) {
+    Notify.info('Enter data to search!', notifyInit);
+
+    refs.searchInput.placeholder = 'What are you looking for?';
+    return;
+  };
+
+  pixaby.query = query;
+
+  try {
+    const { hits, totalHits } = await pixaby.getImages();
+
+    if (hits.length === 0) {
+      Notify.failure(`Sorry, there are no images matching your ${query}. Please try again.`, notifyInit);
+
+      return;
+    }
+
+    const imageMarkupResult = imageMarkup(hits);
     refs.gallery.insertAdjacentHTML('beforeend', imageMarkupResult);
-  })
-  .catch((error) => console.error(error));
+
+    pixaby.totalPages(totalHits);
+    Notify.success(`Hooray! We found ${totalHits} images.`, notifyInit);
+
+    lightboxGallery.refresh();
+    refs.loadMoreBtn.style.visibility = 'visible';
+  } catch (error) {
+    console.error(error);
+  };
+
 };
 
-function onLoadMoreBtnClick(event) {
+async function onLoadMoreBtnClick() {
+  // refs.loadMoreBtn.style.visibility = 'hidden';
+
+  // try {
+  //   const { hits, totalHits } = await pixaby.getImages();
+
+  //   const imageMarkupResult = imageMarkup(hits);
+  //   refs.gallery.insertAdjacentHTML('beforeend', imageMarkupResult);
+
+  //   lightboxGallery.refresh();
+  //   refs.loadMoreBtn.style.visibility = 'visible';
+  // } catch (error) {
+  //   console.error(error);
+  // };
 
 };
+
+
+// Плавне прокручування
+function scrolling() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
+
+// Нескінченний скрол
