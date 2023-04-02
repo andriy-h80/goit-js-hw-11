@@ -1,0 +1,64 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    width: 100vw;
+    height: 65px;
+    background: #6983f7;
+}
+
+.header-container {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.search__form {
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.search__form-input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    max-width: 600px;
+    width: 320px;
+    height: 45px;
+
+    border: none;
+    outline: none;
+    border-radius: 40px;
+
+    background-color: #ecf8aa;
+    text-shadow: 2px 2px 2px #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.search__form-button {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    padding: 10px 20px;
+    height: 40px;
+
+    border: 0;
+    outline: 0;
+    border-radius: 320px;
+    cursor: pointer;
+
+    text-shadow: 1px 1px 1px #ffffff;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        box-shadow: -2px -2px 5px #ffffff, 2px 2px 5px #babecc;
+    }
+
+    @media screen and (max-width: 479px) {
+        margin-left: 5px;
+      }
+}

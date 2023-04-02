@@ -9,21 +9,27 @@
   </head>
   <body>
 
+    <header class="header">
+      <div class="container header__container">
     <!-- Форма пошуку -->
-    <form class="search__form" id="search-form">
-      <input class="search__form-input"
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        placeholder="Search images..."
-      />
-      <button type="submit" class="search__form-button">Search</button>
-    </form>
+        <form class="search__form" id="search-form">
+          <input class="search__form-input"
+            type="text"
+            name="searchQuery"
+            autocomplete="off"
+            placeholder="Search images..."
+          />
+        <button type="submit" class="search__form-button">Search</button>
+        </form>
+      </div>
+    </header>
 
+    <section class="container gallery__container">
     <!-- Галерея -->
-    <div class="gallery">
+      <div class="gallery">
       <!-- Картки зображень -->
-    </div>
+      </div>
+    </section>
 
     <!-- Кнопка запиту -->
     <button type="button" class="load-more is-hidden">Load more</button>

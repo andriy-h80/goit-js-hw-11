@@ -40,8 +40,8 @@ export class Pixabay {
         this.#page = 1;
     }
 
-    totalPages(totalHits) {
-        this.#totalPages = totalHits;
+    totalPages(total) {
+        this.#totalPages = total;
     }
 
     hasMoreImages() {
