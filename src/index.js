@@ -46,7 +46,7 @@ const loadMoreImages = async function (entries, observer) {
         const imageMarkupResult = imageMarkup(hits);
         refs.gallery.insertAdjacentHTML('beforeend', imageMarkupResult);
         
-        if (!pixaby.hasMoreImages) {
+        if (pixaby.hasMoreImages) {
           const lastImage = document.querySelector('.gallery a:last-child');
           observer.observe(lastImage);
         } else {
@@ -54,8 +54,8 @@ const loadMoreImages = async function (entries, observer) {
           refs.loadMoreBtn.classList.add('is-hidden');
         };
     
-          lightboxGallery.refresh();
-          refs.loadMoreBtn.classList.remove('is-hidden');
+        lightboxGallery.refresh();
+        refs.loadMoreBtn.classList.remove('is-hidden');
         scrolling();
       } catch (error) {
         Notify.failure(error.message, 'Something went wrong!', notifyInit);
@@ -86,7 +86,7 @@ const onSubmitBtnClick = async event => {
   pixaby.query = query;
 
   try {
-    const { hits, total } = await pixaby.getImages();
+    const { hits, totalHits } = await pixaby.getImages();
 
     if (hits.length === 0) {
       Notify.failure(`Sorry, there are no images matching your ${query}. Please try again.`, notifyInit);
@@ -98,13 +98,13 @@ const onSubmitBtnClick = async event => {
     const imageMarkupResult = imageMarkup(hits);
     refs.gallery.insertAdjacentHTML('beforeend', imageMarkupResult);
 
-    pixaby.totalPages(total);
-    Notify.success(`Hooray! We found ${total} images.`, notifyInit);
+    pixaby.totalPages(totalHits);
+    Notify.success(`Hooray! We found ${totalHits} images.`, notifyInit);
 
-    if (pixaby.shouldMoreImages) {
-      const lastImage = document.querySelector('.gallery a:last-child');
-      observer.observe(lastImage);
-    }
+    // if (pixaby.hasMoreImages) {
+    //   const lastImage = document.querySelector('.gallery a:last-child');
+    //   observer.observe(lastImage);
+    // }
 
     lightboxGallery.refresh();
     refs.loadMoreBtn.classList.remove('is-hidden');
@@ -117,6 +117,11 @@ const onSubmitBtnClick = async event => {
 const onLoadMoreBtnClick = async () => {
   pixaby.incrementPage();
 
+  if (!pixaby.hasMoreImages) {
+    refs.loadMoreBtn.classList.add('is-hidden');
+    Notify.info("We're sorry, but you've reached the end of search results.", notifyInit);
+  } 
+
   try {
     const { hits } = await pixaby.getImages();
     const imageMarkupResult = imageMarkup(hits);
@@ -125,14 +130,9 @@ const onLoadMoreBtnClick = async () => {
     refs.loadMoreBtn.classList.remove('is-hidden');
   } catch (error) {
     Notify.failure(error.message, 'Something went wrong!', notifyInit);
-  }; 
-
-  if (!pixaby.hasMoreImages) {
-    refs.loadMoreBtn.classList.add('is-hidden');
-    Notify.info("We're sorry, but you've reached the end of search results.", notifyInit);
   }
 
- };
+};
 
 refs.form.addEventListener('submit', onSubmitBtnClick);
 refs.loadMoreBtn.addEventListener('click', debounce(onLoadMoreBtnClick, DEBOUNCE_DELAY));
