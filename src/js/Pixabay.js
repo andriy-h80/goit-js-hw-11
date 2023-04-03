@@ -45,6 +45,6 @@ export class Pixabay {
     }
 
     hasMoreImages() {
-        return this.#page * this.#per_page < this.#totalPages;
+        return Math.ceil(this.#totalPages / this.#per_page) === this.#page || this.#totalPages < this.#per_page;
     }
 }
